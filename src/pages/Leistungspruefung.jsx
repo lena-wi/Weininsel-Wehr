@@ -1,17 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Button } from '@headlessui/react';
 import supabase from '../services/supabaseClient';
-import LinkButton from './atoms/LInkButton';
+import LinkButton from '../components/atoms/LInkButton';
 
-const MainScreen = () => {
+const Leistungspruefung = () => {
   useEffect(() => {
     getTopics();
   }, []);
 
   async function getTopics() {
-    const { data } = await supabase.from('main_topics').select();
+    const { data } = await supabase.from('sub_topics').select();
     setTopics(data);
   }
   const [topics, setTopics] = useState([]);
@@ -32,4 +30,4 @@ const MainScreen = () => {
   );
 };
 
-export default MainScreen;
+export default Leistungspruefung;
