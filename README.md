@@ -1,4 +1,4 @@
-# Weininsel-Wehr study and training app for firefighters in bavaria
+# Weininsel-Wehr
 
 This web application is designed and optimized for mobile use, providing essential resources and training materials for the fire departments at bavaria, germany. 
 It includes lecture files, exercises, and a quiz feature to help firefighters prepare for exams and ensure they are ready for real-world challenges.
