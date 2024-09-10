@@ -22,7 +22,7 @@ module.exports = {
   useTabs: false,
 
   // Set the maximum line length
-  printWidth: 80,
+  printWidth: 70,
 
   // Add a newline at the end of files
   endOfLine: 'lf',
