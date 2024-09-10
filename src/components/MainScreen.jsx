@@ -1,9 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Button } from '@headlessui/react';
 import supabase from '../services/supabaseClient';
 import LinkButton from './atoms/LInkButton';
+import logo from '../assets/ffwlogo.png';
 
 const MainScreen = () => {
   useEffect(() => {
@@ -19,7 +18,7 @@ const MainScreen = () => {
   return (
     <div className="flex flex-col items-center justify-center bg-main min-h-screen p-4">
       <img
-        src="src/assets/ffwlogo.png"
+        src={logo}
         alt="logo firedepartment"
         className="w-3/4 sm:w-1/2 md:w-1/3 lg:w-1/4 h-auto object-cover mb-8"
       />
