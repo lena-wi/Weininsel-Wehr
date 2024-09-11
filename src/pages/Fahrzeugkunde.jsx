@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 
 const Mta = () => {
-  return <div>CONTENT FOR Fahrzeugkunde </div>;
-};
+    return <div>CONTENT FOR Fahrzeugkunde </div>
+}
 
-export default Mta;
+export default Mta

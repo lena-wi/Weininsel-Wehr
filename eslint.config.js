@@ -1,28 +1,24 @@
-// eslint.config.js
-module.exports = {
-  root: true,
-  parser: '@babel/eslint-parser',
-  parserOptions: {
-    ecmaVersion: 2021,
-    sourceType: 'module',
-    ecmaFeatures: {
-      jsx: true,
-    },
-  },
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:prettier/recommended',
-  ],
-  plugins: ['react', 'prettier'],
-  rules: {
-    'prettier/prettier': ['error', { singleQuote: true, semi: true }],
-    'react/react-in-jsx-scope': 'off', // Adjust based on React version
-  },
-  settings: {
-    react: {
-      version: 'detect',
-    },
-  },
-};
+import js from "@eslint/js";
+import stylistic from "@stylistic/eslint-plugin";
+import react from "eslint-plugin-react";
 
+export default [
+  js.configs.recommended,
+  {
+    plugins: {
+      "@stylistic": stylistic,
+      react: react,
+    },
+    files: ["src/**/*.js", "src/**/*.jsx"],
+    rules: {
+      "no-unused-vars": "warn",
+      "no-undef": "warn",
+      "@stylistic/indent": ["error", 2],
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+  },
+];
