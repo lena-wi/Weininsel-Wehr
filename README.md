@@ -5,47 +5,47 @@ It includes lecture files, exercises, and a quiz feature to help firefighters pr
 
 ## Features
 
-- **Mobile-Optimized Interface**: Easy-to-use interface designed specifically for mobile devices to facilitate learning on the go.
-- **Training Resources**: Access essential files and lectures related to fire department exercises. Stay up-to-date with the latest practices and procedures.
+-   **Mobile-Optimized Interface**: Easy-to-use interface designed specifically for mobile devices to facilitate learning on the go.
+-   **Training Resources**: Access essential files and lectures related to fire department exercises. Stay up-to-date with the latest practices and procedures.
 
-- **Interactive Quiz**: Prepare for the fire department exams by taking quizzes that test your knowledge on various firefighting topics and scenarios.
+-   **Interactive Quiz**: Prepare for the fire department exams by taking quizzes that test your knowledge on various firefighting topics and scenarios.
 
 ## Installation
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/yourusername/fire-department-sommerach-app.git
+    ```bash
+    git clone https://github.com/MrIceTea321/Weininsel-Wehr.git
 
-   ```
+    ```
 
 2. Navigate into the project directory:
 
-   ```bash
-   cd Weininsel-Wehr
+    ```bash
+    cd Weininsel-Wehr
 
-   ```
+    ```
 
 3. Install dependencies
 
-   ```bash
-   npm install
+    ```bash
+    npm install
 
-   ```
+    ```
 
 4. Set up the Supabase environment by adding your Supabase credentials:
    Create a .env file at the root of the project and add the following:
 
-   ```bash
-   VITE_SUPABASE_URL=your-supabase-url
-   VITE_SUPABASE_KEY=your-supabase-key
+    ```bash
+    VITE_SUPABASE_URL=your-supabase-url
+    VITE_SUPABASE_KEY=your-supabase-key
 
-   ```
+    ```
 
 5. Run the application locally:
-   ```bash
-   npm run dev
-   ```
+    ```bash
+    npm run dev
+    ```
 
 ## Usage
 
@@ -57,9 +57,9 @@ It includes lecture files, exercises, and a quiz feature to help firefighters pr
 
 ## Technology Stack
 
-- **Frontend**: React, Vite, Tailwind CSS, Headless UI
-- **Backend**: Supabase (for database and authentication)
-- **Mobile Optimization**: Fully responsive design using CSS Grid and Flexbox for a seamless experience across devices.
+-   **Frontend**: React, Vite, Tailwind CSS, Headless UI
+-   **Backend**: Supabase (for database and authentication)
+-   **Mobile Optimization**: Fully responsive design using CSS Grid and Flexbox for a seamless experience across devices.
 
 ## Contributing
 
