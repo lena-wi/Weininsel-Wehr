@@ -5,6 +5,7 @@ import Fahrzeugkunde from './pages/Fahrzeugkunde'
 import Mta from './pages/Mta'
 import PdfViewer from './components/molecules/PdfView'
 import Quiz from './pages/Quiz'
+
 import {
     FAHRZEUGKUNDE_ID,
     LEISTUNGSPRUEFUNG_ID,
@@ -17,6 +18,10 @@ function App() {
             <div className="weininsel-wehr-app bg-main">
                 <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route
+                        path="/aktuelles"
+                        element={<PdfViewer sup_topic_id={7} />}
+                    />
                     <Route
                         path="/leistungspruefung"
                         element={
