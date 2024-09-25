@@ -23,7 +23,7 @@ const MainScreen = () => {
             <img
                 src={logo}
                 alt="logo firedepartment"
-                className="w-2/5 md:w-1/2 h-auto object-cover mb-8"
+                className="w-2/5 md:w-1/2 lg:w-1/4 h-auto object-cover mb-8"
             />
 
             <div className="flex md:text-xl text-lg flex-col space-y-6">

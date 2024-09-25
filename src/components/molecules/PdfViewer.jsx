@@ -9,23 +9,35 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     import.meta.url
 ).toString()
 
-const PdfViewer = ({ sup_topic_id, table_name }) => {
+const PdfViewer = ({ sup_topic_id, table_name, is_current_topic = false }) => {
     const [pdfUrl, setPdfUrl] = useState(null)
     const [numPages, setNumPages] = useState(null)
     const [scale, setScale] = useState(1.0)
+    const [data, setData] = useState(null)
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         const fetchPdfUrl = async () => {
-            if (!sup_topic_id) {
-                console.error('PDF ID is required to fetch the PDF URL.')
-                return
+            if (is_current_topic) {
+                if (!sup_topic_id) {
+                    console.error('PDF ID is required to fetch the PDF URL.')
+                    return
+                }
+                const { data, error } = await supabase
+                    .from(table_name)
+                    .select('url')
+                    .eq('pdf_content_topics_id', sup_topic_id)
+                    .single()
+                setData(data)
+                setError(error)
+            } else {
+                const { data, error } = await supabase
+                    .from(table_name)
+                    .select('url')
+                    .single()
+                setData(data)
+                setError(error)
             }
-
-            const { data, error } = await supabase
-                .from(table_name)
-                .select('url')
-                .eq('pdf_content_topics_id', sup_topic_id)
-                .single()
 
             if (error) {
                 console.error('Error fetching PDF URL:', error)

@@ -58,7 +58,7 @@ const Quiz = ({ questions_sub_topics_id, topic_name, root_href }) => {
                 question && (
                     <div className="question-answer-section space-y-6 w-full">
                         {/* Question Section */}
-                        <div className="question-container bg-grey p-6 rounded-lg shadow-md w-full">
+                        <div className="question-container bg-white p-6 rounded-lg shadow-md w-full">
                             <h2 className="question-text text-xl text-black font-light text-center items-center mb-4">
                                 {question.questionText}
                             </h2>
@@ -79,7 +79,7 @@ const Quiz = ({ questions_sub_topics_id, topic_name, root_href }) => {
                                                 className={`answer-wrapper p-4 rounded-lg transition-all duration-300 shadow-md scale-110`}
                                             >
                                                 <button
-                                                    className={`px-6 py-3 h-28 text-center bg-red opacity-50 font-light rounded-lg shadow-lg transition-colors w-full text-white`}
+                                                    className={`px-6 py-3 h-28 text-center bg-red opacity-50 font-light rounded-lg shadow-lg transition-colors w-full text-black`}
                                                     disabled
                                                 >
                                                     {answer.text}
@@ -94,7 +94,7 @@ const Quiz = ({ questions_sub_topics_id, topic_name, root_href }) => {
                                                     showCorrectAnswer &&
                                                     isCorrectAnswer
                                                         ? 'bg-sec opacity-70'
-                                                        : 'bg-grey'
+                                                        : 'bg-white'
                                                 }`}
                                                 onClick={() =>
                                                     !showCorrectAnswer &&

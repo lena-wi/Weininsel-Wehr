@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import supabase from '../services/supabaseClient'
 import SubPageImage from '../components/atoms/SubPageImage'
 import TopicHeadline from '../components/atoms/Seperator'
+import LinkButton from '../components/atoms/LInkButton'
 
 const Aktuelles = () => {
     useEffect(() => {
