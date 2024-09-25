@@ -9,40 +9,44 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     import.meta.url
 ).toString()
 
-const PdfViewer = ({ sup_topic_id, table_name, is_current_topic = false }) => {
+const PdfViewer = ({ sub_topic_id, table_name, is_current_topic = false }) => {
     const [pdfUrl, setPdfUrl] = useState(null)
-    const [numPages, setNumPages] = useState(null)
+    const [numPages, setNumPages] = useState(0)
     const [scale, setScale] = useState(1.0)
-    const [data, setData] = useState(null)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
     useEffect(() => {
         const fetchPdfUrl = async () => {
-            if (is_current_topic) {
-                if (!sup_topic_id) {
-                    console.error('PDF ID is required to fetch the PDF URL.')
-                    return
-                }
-                const { data, error } = await supabase
-                    .from(table_name)
-                    .select('url')
-                    .eq('pdf_content_topics_id', sup_topic_id)
-                    .single()
-                setData(data)
-                setError(error)
-            } else {
-                const { data, error } = await supabase
-                    .from(table_name)
-                    .select('url')
-                    .single()
-                setData(data)
-                setError(error)
+            setLoading(true) // Start loading
+            setError(null) // Reset error state
+
+            if (!sub_topic_id) {
+                console.error('PDF ID is required to fetch the PDF URL.')
+                setLoading(false) // Stop loading
+                return
             }
 
-            if (error) {
-                console.error('Error fetching PDF URL:', error)
-            } else {
-                setPdfUrl(data.url)
+            try {
+                const { data, error } = await supabase
+                    .from(table_name)
+                    .select('url')
+                    .eq(
+                        is_current_topic ? 'id' : 'pdf_content_topics_id',
+                        sub_topic_id
+                    )
+                    .single()
+
+                if (error || !data?.url) {
+                    throw new Error(error?.message || 'PDF URL not found.')
+                }
+
+                setPdfUrl(data.url) // Set the PDF URL
+            } catch (err) {
+                setError(err.message) // Set error state
+                console.error('Error fetching PDF URL:', err)
+            } finally {
+                setLoading(false) // Stop loading
             }
         }
 
@@ -54,18 +58,22 @@ const PdfViewer = ({ sup_topic_id, table_name, is_current_topic = false }) => {
         }
 
         window.addEventListener('resize', updateScale)
-        updateScale()
+        updateScale() // Initial scale update
 
         return () => window.removeEventListener('resize', updateScale)
-    }, [])
+    }, [sub_topic_id, table_name, is_current_topic]) // Dependencies added for clarity
 
-    function onLoadSuccess({ numPages }) {
+    const onLoadSuccess = ({ numPages }) => {
         setNumPages(numPages)
     }
 
     return (
         <div className="pdf-viewer bg-white w-100 flex justify-center">
-            {pdfUrl ? (
+            {loading ? (
+                <p>Lädt Pdf...</p>
+            ) : error ? (
+                <p>Error: {error}</p>
+            ) : (
                 <Document file={pdfUrl} onLoadSuccess={onLoadSuccess}>
                     {[...Array(numPages).keys()].map((n) => (
                         <Page
@@ -76,8 +84,6 @@ const PdfViewer = ({ sup_topic_id, table_name, is_current_topic = false }) => {
                         />
                     ))}
                 </Document>
-            ) : (
-                <p>Lädt Pdf...</p>
             )}
         </div>
     )

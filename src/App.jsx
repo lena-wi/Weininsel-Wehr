@@ -7,7 +7,6 @@ import PdfViewer from './components/molecules/PdfViewer'
 import Quiz from './pages/Quiz'
 import { useEffect, useState } from 'react'
 import supabase from './services/supabaseClient'
-
 import {
     FAHRZEUGKUNDE_ID,
     LEISTUNGSPRUEFUNG_ID,
