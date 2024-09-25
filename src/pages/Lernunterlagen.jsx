@@ -3,7 +3,7 @@ import supabase from '../services/supabaseClient'
 import LinkButton from '../components/atoms/LInkButton'
 import SubPageImage from '../components/atoms/SubPageImage'
 
-const Leistungspruefung = ({ sub_topic_id }) => {
+const Lernunterlagen = ({ main_topics_id }) => {
     useEffect(() => {
         getTopics()
     }, [])
@@ -12,10 +12,9 @@ const Leistungspruefung = ({ sub_topic_id }) => {
         const { data } = await supabase
             .from('topics')
             .select()
-            .eq('sub_topic_id', sub_topic_id)
+            .eq('is_main_topic', true)
         setTopics(data)
     }
-
     const [topics, setTopics] = useState([])
 
     return (
@@ -29,4 +28,4 @@ const Leistungspruefung = ({ sub_topic_id }) => {
         </div>
     )
 }
-export default Leistungspruefung
+export default Lernunterlagen

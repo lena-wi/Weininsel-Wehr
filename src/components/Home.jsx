@@ -1,29 +1,22 @@
-import { useEffect, useState } from 'react'
-import supabase from '../services/supabaseClient'
 import LinkButton from './atoms/LInkButton'
 import logo from '../assets/ffwlogo.png'
+import { useEffect, useState } from 'react'
+import supabase from '../services/supabaseClient'
 
 const MainScreen = () => {
     useEffect(() => {
-        getTopics()
-        getInfoTopic()
+        getHomeTopics()
     }, [])
 
-    async function getTopics() {
+    async function getHomeTopics() {
         const { data } = await supabase
-            .from('main_topics')
+            .from('topics')
             .select()
-            .neq('id', 8)
-        setTopics(data)
+            .eq('is_home_topic', true)
+        setHomeTopics(data)
     }
-    const [topics, setTopics] = useState([])
 
-    async function getInfoTopic() {
-        const { data } = await supabase.from('main_topics').select().eq('id', 8)
-
-        setInfoTopic(data)
-    }
-    const [infoTopic, setInfoTopic] = useState([])
+    const [homeTopics, setHomeTopics] = useState([])
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -34,10 +27,7 @@ const MainScreen = () => {
             />
 
             <div className="flex md:text-xl text-lg flex-col space-y-6">
-                {infoTopic.map((topic, index) => (
-                    <LinkButton key={index} topic={topic} />
-                ))}
-                {topics.map((topic, index) => (
+                {homeTopics.map((topic, index) => (
                     <LinkButton key={index} topic={topic} />
                 ))}
             </div>

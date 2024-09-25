@@ -9,7 +9,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     import.meta.url
 ).toString()
 
-const PdfViewer = ({ sup_topic_id }) => {
+const PdfViewer = ({ sup_topic_id, table_name }) => {
     const [pdfUrl, setPdfUrl] = useState(null)
     const [numPages, setNumPages] = useState(null)
     const [scale, setScale] = useState(1.0)
@@ -22,9 +22,9 @@ const PdfViewer = ({ sup_topic_id }) => {
             }
 
             const { data, error } = await supabase
-                .from('pdf_content')
+                .from(table_name)
                 .select('url')
-                .eq('pdf_content_sub_topics_id', sup_topic_id)
+                .eq('pdf_content_topics_id', sup_topic_id)
                 .single()
 
             if (error) {
@@ -65,7 +65,7 @@ const PdfViewer = ({ sup_topic_id }) => {
                     ))}
                 </Document>
             ) : (
-                <p>Loading PDF...</p>
+                <p>Lädt Pdf...</p>
             )}
         </div>
     )

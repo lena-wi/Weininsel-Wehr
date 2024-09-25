@@ -1,26 +1,23 @@
 import { useEffect, useState } from 'react'
 import supabase from '../services/supabaseClient'
-import LinkButton from '../components/atoms/LInkButton'
 import SubPageImage from '../components/atoms/SubPageImage'
+import TopicHeadline from '../components/atoms/Seperator'
 
-const Leistungspruefung = ({ sub_topic_id }) => {
+const Aktuelles = () => {
     useEffect(() => {
-        getTopics()
+        getPdfTopics()
     }, [])
 
-    async function getTopics() {
-        const { data } = await supabase
-            .from('topics')
-            .select()
-            .eq('sub_topic_id', sub_topic_id)
+    async function getPdfTopics() {
+        const { data } = await supabase.from('current_pdf_content').select()
         setTopics(data)
     }
-
     const [topics, setTopics] = useState([])
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
             <SubPageImage />
+            <TopicHeadline text={'📄 Dokumente 📄'} />
             <div className="flex md:text-xl text-lg flex-col space-y-6">
                 {topics.map((topic, index) => (
                     <LinkButton key={index} topic={topic} />
@@ -29,4 +26,5 @@ const Leistungspruefung = ({ sub_topic_id }) => {
         </div>
     )
 }
-export default Leistungspruefung
+
+export default Aktuelles
