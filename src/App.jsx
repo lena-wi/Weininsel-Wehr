@@ -7,6 +7,7 @@ import PdfViewer from './components/molecules/PdfViewer'
 import Quiz from './pages/Quiz'
 import { useEffect, useState } from 'react'
 import supabase from './services/supabaseClient'
+import Header from './components/molecules/Header'
 import {
     FAHRZEUGKUNDE_ID,
     LEISTUNGSPRUEFUNG_ID,
@@ -108,6 +109,7 @@ function App() {
     return (
         <Router>
             <div className="weininsel-wehr-app bg-green">
+                <Header />
                 <Routes>
                     {/* Render general pages */}
                     {generalPages.map(({ path, element }) => (

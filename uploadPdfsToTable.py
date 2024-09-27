@@ -18,9 +18,9 @@ load_dotenv()
 
 # Set up Supabase credentials
 SUPABASE_URL = os.getenv("VITE_SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-BUCKET_NAME = os.getenv("SUPABASE_BUCKET_NAME")
-TABLE_NAME = os.getenv("SUPABASE_RELATED_BUCKET_TABLE_NAME")
+SUPABASE_KEY = os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY")
+BUCKET_NAME = os.getenv("VITE_SUPABASE_BUCKET_NAME")
+TABLE_NAME = os.getenv("VITE_SUPABASE_RELATED_BUCKET_TABLE_NAME")
 
 # Initialize Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
