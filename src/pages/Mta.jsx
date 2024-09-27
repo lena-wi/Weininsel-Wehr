@@ -15,6 +15,7 @@ const Mta = ({ sub_topic_id }) => {
             .from('topics')
             .select()
             .eq('sub_topic_id', sub_topic_id)
+            .eq('is_active', true)
             .eq('is_quiz_topic', false)
         setTopics(data)
     }

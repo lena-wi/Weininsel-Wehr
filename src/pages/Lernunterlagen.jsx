@@ -13,6 +13,8 @@ const Lernunterlagen = ({ main_topics_id }) => {
             .from('topics')
             .select()
             .eq('is_main_topic', true)
+            .eq('is_active', true)
+
         setTopics(data)
     }
     const [topics, setTopics] = useState([])

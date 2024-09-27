@@ -11,7 +11,11 @@ const Aktuelles = () => {
     }, [])
 
     async function getPdfTopics() {
-        const { data } = await supabase.from('current_pdf_content').select()
+        const { data } = await supabase
+            .from('current_pdf_content')
+            .select()
+            .eq('is_active', true)
+
         setTopics(data)
     }
     const [topics, setTopics] = useState([])
