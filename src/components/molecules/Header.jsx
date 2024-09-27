@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 function Header() {
     return (
-        <header className="shadow-lg bg-green transition-colors">
+        <header className="shadow-lg py-1 bg-green transition-colors">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center h-16">
                     {/* Logo */}

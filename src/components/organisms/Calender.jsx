@@ -50,9 +50,9 @@ const Calendar = () => {
 
     return (
         <div className="mx-auto">
-            <h2 className="text-2xl font-light text-center mb-4">
+            <h3 className="text-2xl font-light text-center mb-4">
                 Anstehende Termine:
-            </h2>
+            </h3>
             <div className="bg-white shadow-md rounded-lg p-3 max-h-64 h-auto overflow-y-auto">
                 {events.length > 0 ? (
                     <ul>
@@ -86,7 +86,7 @@ const Calendar = () => {
                         })}
                     </ul>
                 ) : (
-                    <p>Keine Termine in den nächsten 4 Wochen</p>
+                    <p>Keine Termine vorhanden</p>
                 )}
             </div>
         </div>

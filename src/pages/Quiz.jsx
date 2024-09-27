@@ -51,7 +51,7 @@ const Quiz = ({ questions_sub_topics_id, topic_name, root_href }) => {
     const question = questions[currentQuestion]
 
     return (
-        <div className="quiz-container p-4 h-screen flex flex-col items-start">
+        <div className="quiz-container p-4 flex flex-col items-start">
             {questions.length === 0 ? (
                 <p>Lädt fragen ...</p>
             ) : (
@@ -93,7 +93,7 @@ const Quiz = ({ questions_sub_topics_id, topic_name, root_href }) => {
                                                 className={`px-6 py-3 h-28 text-center font-light rounded-lg shadow-lg transition-colors w-full hover:cursor-pointer ${
                                                     showCorrectAnswer &&
                                                     isCorrectAnswer
-                                                        ? 'bg-sec opacity-70'
+                                                        ? 'bg-sec opacity-40'
                                                         : 'bg-white'
                                                 }`}
                                                 onClick={() =>
