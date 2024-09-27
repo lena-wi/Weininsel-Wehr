@@ -1,4 +1,4 @@
-import logo from '../../assets/ffwlogo.png'
+import logo from '../../assets/ffwlogo.webp'
 import { Link } from 'react-router-dom'
 
 function Header() {
@@ -10,7 +10,7 @@ function Header() {
                     <Link to="/">
                         <div className="flex-shrink-0">
                             <img
-                                className="h-14 object-fit"
+                                className="w-14 object-fit"
                                 src={logo}
                                 alt="Logo"
                             />

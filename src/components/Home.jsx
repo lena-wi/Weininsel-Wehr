@@ -1,5 +1,5 @@
 import LinkButton from './atoms/LInkButton'
-import logo from '../assets/ffwlogo.png'
+import logo from '../assets/ffwlogo.webp'
 import { useEffect, useState } from 'react'
 import supabase from '../services/supabaseClient'
 import Calendar from './organisms/Calender'
@@ -21,7 +21,7 @@ const MainScreen = () => {
     const [homeTopics, setHomeTopics] = useState([])
 
     return (
-        <div className="flex flex-col overflow-y-hidden items-center h-screen p-4">
+        <div className="flex flex-col items-center p-4">
             <img
                 src={logo}
                 alt="logo firedepartment"

@@ -20,7 +20,7 @@ const Lernunterlagen = ({ main_topics_id }) => {
     const [topics, setTopics] = useState([])
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="flex flex-col items-center justify-center p-4">
             <SubPageImage />
             <div className="flex md:text-xl text-lg flex-col space-y-6">
                 {topics.map((topic, index) => (

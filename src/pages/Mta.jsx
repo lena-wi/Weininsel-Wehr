@@ -32,16 +32,16 @@ const Mta = ({ sub_topic_id }) => {
     const [quizTopics, setQuizTopics] = useState([])
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="flex flex-col items-center justify-center p-4">
             <SubPageImage />
             <TopicHeadline text={'📄 Dokumente 📄'} />
-            <div className="flex py-4 md:text-xl text-lg flex-col space-y-6">
+            <div className="flex py-4 md:text-xl text-lg flex-col space-y-4">
                 {topics.map((topic, index) => (
                     <LinkButton key={index} topic={topic} />
                 ))}
             </div>
             <TopicHeadline text={'💭 Quiz 💭'} />
-            <div className="flex py-4 md:text-xl text-lg flex-col space-y-6">
+            <div className="flex py-4 md:text-xl text-lg flex-col space-y-4">
                 {quizTopics.map((topic, index) => (
                     <LinkButton key={index} topic={topic} />
                 ))}
