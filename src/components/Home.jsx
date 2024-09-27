@@ -25,7 +25,7 @@ const MainScreen = () => {
             <img
                 src={logo}
                 alt="logo firedepartment"
-                className="w-1/3 md:w-1/2 lg:w-1/4 opacity-80 h-auto object-cover"
+                className="w-3/12 md:w-1/6 lg:w-2/12 xl:w-1/12 opacity-80 h-auto object-cover"
             />
             <div className="py-6">
                 <Calendar />
