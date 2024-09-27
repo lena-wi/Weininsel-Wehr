@@ -1,3 +1,0 @@
-# Block all crawlers from indexing the site
-User-agent: *
-Disallow: /
