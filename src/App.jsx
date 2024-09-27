@@ -52,7 +52,7 @@ const generalPages = [
         path: '/teilnehmerunterlagen',
         element: (
             <PdfViewer
-                sup_topic_id={TEILNEHMERUNTERLAGEN_ID}
+                sub_topic_id={TEILNEHMERUNTERLAGEN_ID}
                 table_name={GENERAL_PDF_TABLE_NAME}
             />
         ),

@@ -1,6 +1,6 @@
 # Weininsel-Wehr
 
-This web application is designed and optimized for mobile use, providing essential resources and training materials for the fire departments in Bavaria, Germany. It includes lecture files, exercises, and a quiz feature to help firefighters prepare for exams and ensure they are ready for real-world challenges.
+This web application is designed and optimized for mobile use, providing essential resources and training materials for the fire departments in Bavaria, Germany. It includes lecture files, exercises, a quiz feature to help firefighters prepare for exams, and a Google Calendar integration to keep track of upcoming events and training sessions.
 
 ## Features
 
@@ -8,6 +8,7 @@ This web application is designed and optimized for mobile use, providing essenti
 -   **Training Resources**: Access essential files and lectures related to fire department exercises. Stay up-to-date with the latest practices and procedures.
 -   **Interactive Quiz**: Prepare for the fire department exams by taking quizzes that test your knowledge on various firefighting topics and scenarios.
 -   **PDF Upload Script**: A Python script for uploading PDF files to a Supabase database, allowing for easy management of training resources.
+-   **Google Calendar Integration**: View upcoming events and training sessions directly within the application using Google Calendar API.
 
 ## Installation
 
@@ -39,7 +40,15 @@ This web application is designed and optimized for mobile use, providing essenti
     VITE_SUPABASE_KEY=your-supabase-key
     ```
 
-5. Run the application locally:
+5. Set up the Google Calendar API by adding your Google API credentials:
+   Update your `.env` file with:
+
+    ```bash
+    VITE_GOOGLE_CALENDAR_API_KEY=your-google-calendar-api-key
+    VITE_GOOGLE_CALENDAR_ID=your-google-calendar-id
+    ```
+
+6. Run the application locally:
 
     ```bash
     npm run dev
@@ -80,6 +89,7 @@ This web application is designed and optimized for mobile use, providing essenti
 2. **Quiz Section**: Test your knowledge through the quiz feature. You can practice different sets of questions that mimic the format of actual fire department exams.
 3. **Track Your Progress**: Keep an eye on your quiz scores to measure your readiness for the exams.
 4. **Upload PDFs**: Use the Python script to upload PDF files to the Supabase database for easy access and management.
+5. **View Calendar Events**: Check upcoming events and training sessions by integrating with your Google Calendar. Make sure to configure your Google Calendar API credentials correctly.
 
 ## Technology Stack
 
@@ -87,6 +97,7 @@ This web application is designed and optimized for mobile use, providing essenti
 -   **Backend**: Supabase (for database and authentication)
 -   **Mobile Optimization**: Fully responsive design using CSS Grid and Flexbox for a seamless experience across devices.
 -   **Python Script**: Utilizes Supabase for uploading PDF files and managing data.
+-   **Google Calendar API**: Integrated to fetch and display upcoming events.
 
 ## Contributing
 
