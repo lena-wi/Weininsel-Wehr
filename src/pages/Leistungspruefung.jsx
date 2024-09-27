@@ -13,6 +13,8 @@ const Leistungspruefung = ({ sub_topic_id }) => {
             .from('topics')
             .select()
             .eq('sub_topic_id', sub_topic_id)
+            .eq('is_active', true)
+
         setTopics(data)
     }
 
