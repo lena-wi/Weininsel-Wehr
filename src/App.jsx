@@ -93,6 +93,7 @@ function App() {
         const { data } = await supabase.from('current_pdf_content').select()
         setCurrentTopics(data)
     }
+
     const [currentTopics, setCurrentTopics] = useState([])
 
     const currentTopicPages = currentTopics.map((topic) => ({
@@ -108,34 +109,37 @@ function App() {
 
     return (
         <Router>
-            <div className="weininsel-wehr-app bg-green">
+            <div className="weininsel-wehr-app overflow-auto h-screen bg-green">
                 <Header />
-                <Routes>
-                    {/* Render general pages */}
-                    {generalPages.map(({ path, element }) => (
-                        <Route key={path} path={path} element={element} />
-                    ))}
+                <div className="flex-grow overflow-hidden">
+                    {/* Adjust margin here */}
+                    <Routes>
+                        {/* Render general pages */}
+                        {generalPages.map(({ path, element }) => (
+                            <Route key={path} path={path} element={element} />
+                        ))}
 
-                    {/* Render quiz routes dynamically */}
-                    {quizRoutes.map(({ path, id }) => (
-                        <Route
-                            key={path}
-                            path={path}
-                            element={
-                                <Quiz
-                                    root_href={MTA_HREF}
-                                    topic_name={'Zurück zu Truppausbildung'}
-                                    questions_sub_topics_id={id}
-                                />
-                            }
-                        />
-                    ))}
+                        {/* Render quiz routes dynamically */}
+                        {quizRoutes.map(({ path, id }) => (
+                            <Route
+                                key={path}
+                                path={path}
+                                element={
+                                    <Quiz
+                                        root_href={MTA_HREF}
+                                        topic_name={'Zurück zu Truppausbildung'}
+                                        questions_sub_topics_id={id}
+                                    />
+                                }
+                            />
+                        ))}
 
-                    {/* Render current topic pages */}
-                    {currentTopicPages.map(({ path, element }) => (
-                        <Route key={path} path={path} element={element} />
-                    ))}
-                </Routes>
+                        {/* Render current topic pages */}
+                        {currentTopicPages.map(({ path, element }) => (
+                            <Route key={path} path={path} element={element} />
+                        ))}
+                    </Routes>
+                </div>
             </div>
         </Router>
     )

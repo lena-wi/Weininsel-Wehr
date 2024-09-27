@@ -53,7 +53,7 @@ const Calendar = () => {
             <h2 className="text-2xl font-light text-center mb-4">
                 Anstehende Termine:
             </h2>
-            <div className="bg-white shadow-md rounded-lg p-3 h-72 overflow-y-auto">
+            <div className="bg-white shadow-md rounded-lg p-3 max-h-64 h-auto overflow-y-auto">
                 {events.length > 0 ? (
                     <ul>
                         {events.map((event) => {
