@@ -1,8 +1,8 @@
-import LinkButton from './atoms/LinkButton'
+import LinkButton from '../components/atoms/LinkButton'
 import logo from '../assets/ffwlogo.webp'
 import { useEffect, useState } from 'react'
 import supabase from '../services/supabaseClient'
-import Calendar from './organisms/Calender'
+import Calendar from '../components/organisms/Calender'
 
 const MainScreen = () => {
     useEffect(() => {
