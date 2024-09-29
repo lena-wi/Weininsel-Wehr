@@ -3,7 +3,7 @@ import supabase from '../services/supabaseClient'
 import LinkButton from '../components/atoms/LinkButton'
 import SubPageImage from '../components/atoms/SubPageImage'
 import { Dialog } from '@headlessui/react'
-import LoadingIndicator from '../components/atoms/LoadingIndicator' // Spinner Component
+import LoadingIndicator from '../components/atoms/LoadingIndicator'
 import { ImageSearch } from '@mui/icons-material'
 
 const imageCache = new Map()
