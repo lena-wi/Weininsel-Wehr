@@ -6,6 +6,8 @@ import { Dialog } from '@headlessui/react'
 import LoadingIndicator from '../components/atoms/LoadingIndicator' // Spinner Component
 import { ImageSearch } from '@mui/icons-material'
 
+const imageCache = new Map()
+
 const Quiz = ({
     questions_sub_topics_id,
     topic_name,
@@ -18,7 +20,8 @@ const Quiz = ({
     const [score, setScore] = useState(0)
     const [showCorrectAnswer, setShowCorrectAnswer] = useState(false)
     const [showNextButton, setShowNextButton] = useState(false)
-    const [loading, setLoading] = useState(true) // New state for loading indicator
+    const [loadingQuestions, setLoadingQuestions] = useState(true) // Loading state for questions
+    const [loadingImages, setLoadingImages] = useState(false) // Loading state for images
     const [showImageDialog, setShowImageDialog] = useState(false)
     const [imageToShow, setImageToShow] = useState(null) // Store the image to show in the dialog
 
@@ -26,8 +29,8 @@ const Quiz = ({
 
     useEffect(() => {
         const fetchQuestions = async () => {
+            setLoadingQuestions(true) // Show loading spinner for questions
             try {
-                setLoading(true) // Show loading spinner
                 const query = supabase
                     .from('questions_with_answers')
                     .select(`id, questions`)
@@ -38,66 +41,80 @@ const Quiz = ({
                           'questions_sub_topics_id',
                           questions_sub_topics_id
                       )
-                if (error) {
-                    console.error('Error fetching questions:', error)
-                    return
-                }
 
-                if (data && data.length > 0) {
-                    const fetchedQuestions = data
-                        .map((entry) => entry.questions)
-                        .flat()
+                if (error) throw new Error('Error fetching questions:', error)
 
-                    const fetchedIds = data.map((entry) => entry.id).flat()
+                const fetchedQuestions = data
+                    .map((entry) => entry.questions)
+                    .flat()
+                const fetchedIds = data.map((entry) => entry.id).flat()
 
-                    const processedQuestions = isExamMode
-                        ? fetchedQuestions
-                              .sort(() => Math.random() - 0.5)
-                              .slice(0, Math.min(50, fetchedQuestions.length))
-                        : fetchedQuestions
+                const processedQuestions = isExamMode
+                    ? fetchedQuestions
+                          .sort(() => Math.random() - 0.5)
+                          .slice(0, 50)
+                    : fetchedQuestions
 
-                    // Fetch images for related questions
-                    const questionsWithImages = await Promise.all(
-                        processedQuestions.map(async (question, index) => {
-                            const { data: imageData, error: imageError } =
-                                await supabase
-                                    .from('questions_images')
-                                    .select('url')
-                                    .eq('questions_id', fetchedIds[index])
-
-                            if (imageError) {
-                                console.error(
-                                    'Error fetching images:',
-                                    imageError
-                                )
-                                return question
-                            }
-
-                            return {
-                                ...question,
-                                image:
-                                    imageData.length > 0
-                                        ? imageData[0].url
-                                        : null, // Add image URL if available
-                            }
-                        })
-                    )
-
-                    setQuestions(questionsWithImages)
-                }
-            } catch (err) {
-                console.error('Error in fetchQuestions:', err)
+                await fetchImages(processedQuestions, fetchedIds)
+            } catch (error) {
+                console.error('Error in fetchQuestions:', error)
             } finally {
-                setLoading(false) // Hide loading spinner
+                setLoadingQuestions(false) // Hide loading spinner
             }
         }
 
         fetchQuestions()
     }, [questions_sub_topics_id, isExamMode])
 
+    const getImage = async (imageUrl) => {
+        if (imageCache.has(imageUrl)) {
+            return imageCache.get(imageUrl)
+        }
+
+        const response = await fetch(imageUrl)
+        const imageBlob = await response.blob()
+        const objectUrl = URL.createObjectURL(imageBlob)
+        imageCache.set(imageUrl, objectUrl)
+        return objectUrl
+    }
+
+    const fetchImages = async (questions, ids) => {
+        setLoadingImages(true) // Show loading spinner for images
+        try {
+            const questionsWithImages = await Promise.all(
+                questions.map(async (question, index) => {
+                    const { data: imageData, error: imageError } =
+                        await supabase
+                            .from('questions_images')
+                            .select('url')
+                            .eq('questions_id', ids[index])
+
+                    if (imageError) {
+                        console.error('Error fetching images:', imageError)
+                        return question
+                    }
+
+                    const imageUrl =
+                        imageData.length > 0
+                            ? await getImage(imageData[0].url)
+                            : null // Add image URL if available
+                    return {
+                        ...question,
+                        image: imageUrl,
+                    }
+                })
+            )
+
+            setQuestions(questionsWithImages)
+        } catch (error) {
+            console.error('Error in fetchImages:', error)
+        } finally {
+            setLoadingImages(false) // Hide loading spinner for images
+        }
+    }
+
     const handleAnswerClick = (answer) => {
         if (showCorrectAnswer) return
-
         setSelectedAnswer(answer.text)
         setShowCorrectAnswer(true)
         setShowNextButton(true)
@@ -119,7 +136,6 @@ const Quiz = ({
 
     const question = questions[currentQuestionIndex]
 
-    // Trigger image dialog popup
     const handleImageClick = (imageUrl) => {
         setImageToShow(imageUrl)
         setShowImageDialog(true)
@@ -127,8 +143,10 @@ const Quiz = ({
 
     return (
         <div className="quiz-container p-4 overflow-y-auto flex flex-col items-start">
-            {loading ? (
-                <LoadingIndicator /> // Show loading spinner while fetching data
+            {loadingQuestions ? (
+                <LoadingIndicator /> // Show loading spinner while fetching questions
+            ) : loadingImages ? (
+                <LoadingIndicator /> // Show loading spinner while fetching images
             ) : questions.length === 0 ? (
                 <p>Lädt fragen ...</p>
             ) : (
@@ -136,7 +154,6 @@ const Quiz = ({
                     <div className="question-answer-section space-y-6 w-full">
                         <div className="question-container text-center bg-white p-6 rounded-lg shadow-md w-full text-xl text-black font-light items-center mb-4">
                             {question.questionText}
-
                             {question.image && (
                                 <div className="mt-2">
                                     <ImageSearch
@@ -198,7 +215,7 @@ const Quiz = ({
                 )
             )}
 
-            {currentQuestionIndex >= questions.length && (
+            {currentQuestionIndex >= questions.length && !loadingQuestions && (
                 <div className="flex w-full flex-col items-center justify-center transition-colors">
                     <SubPageImage />
                     <h2 className="result-text pt-2 text-4xl text-center font-bold text-white mb-4">
