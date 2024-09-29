@@ -1,4 +1,4 @@
-import LinkButton from './atoms/LInkButton'
+import LinkButton from './atoms/LinkButton'
 import logo from '../assets/ffwlogo.webp'
 import { useEffect, useState } from 'react'
 import supabase from '../services/supabaseClient'
