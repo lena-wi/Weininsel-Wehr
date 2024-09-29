@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import supabase from '../services/supabaseClient'
-import LinkButton from '../components/atoms/LInkButton'
+import LinkButton from '../components/atoms/LinkButton'
 import SubPageImage from '../components/atoms/SubPageImage'
+import { Dialog } from '@headlessui/react'
+import LoadingIndicator from '../components/atoms/LoadingIndicator' // Spinner Component
+import { ImageSearch } from '@mui/icons-material'
 
 const Quiz = ({
     questions_sub_topics_id,
@@ -15,15 +18,19 @@ const Quiz = ({
     const [score, setScore] = useState(0)
     const [showCorrectAnswer, setShowCorrectAnswer] = useState(false)
     const [showNextButton, setShowNextButton] = useState(false)
+    const [loading, setLoading] = useState(true) // New state for loading indicator
+    const [showImageDialog, setShowImageDialog] = useState(false)
+    const [imageToShow, setImageToShow] = useState(null) // Store the image to show in the dialog
 
     const nextButtonRef = useRef(null)
 
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
+                setLoading(true) // Show loading spinner
                 const query = supabase
                     .from('questions_with_answers')
-                    .select('questions')
+                    .select(`id, questions`)
 
                 const { data, error } = isExamMode
                     ? await query
@@ -31,7 +38,6 @@ const Quiz = ({
                           'questions_sub_topics_id',
                           questions_sub_topics_id
                       )
-
                 if (error) {
                     console.error('Error fetching questions:', error)
                     return
@@ -42,18 +48,47 @@ const Quiz = ({
                         .map((entry) => entry.questions)
                         .flat()
 
+                    const fetchedIds = data.map((entry) => entry.id).flat()
+
                     const processedQuestions = isExamMode
                         ? fetchedQuestions
                               .sort(() => Math.random() - 0.5)
                               .slice(0, Math.min(50, fetchedQuestions.length))
                         : fetchedQuestions
 
-                    setQuestions(processedQuestions)
-                } else {
-                    console.log('No questions found')
+                    // Fetch images for related questions
+                    const questionsWithImages = await Promise.all(
+                        processedQuestions.map(async (question, index) => {
+                            const { data: imageData, error: imageError } =
+                                await supabase
+                                    .from('questions_images')
+                                    .select('url')
+                                    .eq('questions_id', fetchedIds[index])
+
+                            if (imageError) {
+                                console.error(
+                                    'Error fetching images:',
+                                    imageError
+                                )
+                                return question
+                            }
+
+                            return {
+                                ...question,
+                                image:
+                                    imageData.length > 0
+                                        ? imageData[0].url
+                                        : null, // Add image URL if available
+                            }
+                        })
+                    )
+
+                    setQuestions(questionsWithImages)
                 }
             } catch (err) {
                 console.error('Error in fetchQuestions:', err)
+            } finally {
+                setLoading(false) // Hide loading spinner
             }
         }
 
@@ -77,7 +112,6 @@ const Quiz = ({
     }
 
     useEffect(() => {
-        // Scroll to the Next Question button when it becomes visible
         if (showNextButton && nextButtonRef.current) {
             nextButtonRef.current.scrollIntoView({ behavior: 'smooth' })
         }
@@ -85,15 +119,35 @@ const Quiz = ({
 
     const question = questions[currentQuestionIndex]
 
+    // Trigger image dialog popup
+    const handleImageClick = (imageUrl) => {
+        setImageToShow(imageUrl)
+        setShowImageDialog(true)
+    }
+
     return (
         <div className="quiz-container p-4 overflow-y-auto flex flex-col items-start">
-            {questions.length === 0 ? (
+            {loading ? (
+                <LoadingIndicator /> // Show loading spinner while fetching data
+            ) : questions.length === 0 ? (
                 <p>Lädt fragen ...</p>
             ) : (
                 question && (
                     <div className="question-answer-section space-y-6 w-full">
                         <div className="question-container text-center bg-white p-6 rounded-lg shadow-md w-full text-xl text-black font-light items-center mb-4">
                             {question.questionText}
+
+                            {question.image && (
+                                <div className="mt-2">
+                                    <ImageSearch
+                                        sx={{ fontSize: 50 }}
+                                        onClick={() =>
+                                            handleImageClick(question.image)
+                                        }
+                                        className="hover:cursor-pointer"
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         <div className="answers-container grid grid-cols-1 gap-4 w-full">
@@ -166,6 +220,33 @@ const Quiz = ({
                     />
                 </div>
             )}
+
+            {/* Image dialog popup */}
+            <Dialog
+                open={showImageDialog}
+                onClose={() => setShowImageDialog(false)}
+                className="relative z-50 bg-white"
+            >
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-75"
+                    aria-hidden="true"
+                />
+                <div className="fixed inset-0 flex items-center justify-center p-4">
+                    <Dialog.Panel className="w-full max-w-md">
+                        <img
+                            src={imageToShow}
+                            alt="Question related"
+                            className="rounded-lg"
+                        />
+                        <button
+                            onClick={() => setShowImageDialog(false)}
+                            className="mt-4 px-4 py-2 bg-white rounded-md shadow-lg"
+                        >
+                            Schließen
+                        </button>
+                    </Dialog.Panel>
+                </div>
+            </Dialog>
         </div>
     )
 }
