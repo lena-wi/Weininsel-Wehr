@@ -10,13 +10,13 @@ function Header() {
                     <Link to="/">
                         <div className="flex-shrink-0">
                             <img
-                                className="w-14 object-fit"
+                                className="w-14 opacity-80 object-fit"
                                 src={logo}
                                 alt="Logo"
                             />
                         </div>
                     </Link>
-                    <span className="text-black opacity-80 text-xl justify-center w-full flex">
+                    <span className="text-black opacity-65 text-xl justify-center w-full flex">
                         "Die" Weininsel-Wehr
                     </span>
                 </div>

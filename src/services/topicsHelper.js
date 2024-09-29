@@ -18,5 +18,6 @@ export const SICHERN_GEGEN_ABSTURZ_ID = 26
 export const TECHNISCHE_HILFELEISTUNG_ID = 27
 export const VERHALTEN_BEI_GEFAHR_ID = 28
 export const VERHALTEN_IM_EINSATZ = 29
+export const PRUEFUNGSMODUS_ID = 30
 export const GENERAL_PDF_TABLE_NAME = 'pdf_content'
-export const MTA_HREF = '/truppausbildung'
+export const MTA_HREF = '/lernunterlagen/truppausbildung'

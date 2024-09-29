@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Home from './components/Home'
 import Leistungspruefung from './pages/Leistungspruefung'
 import Fahrzeugkunde from './pages/Fahrzeugkunde'
-import Mta from './pages/Mta'
+import Truppausbildung from './pages/Truppausbildung'
 import PdfViewer from './components/molecules/PdfViewer'
 import Quiz from './pages/Quiz'
 import { useEffect, useState } from 'react'
@@ -30,6 +30,7 @@ import {
     VERHALTEN_BEI_GEFAHR_ID,
     VERHALTEN_IM_EINSATZ,
     TECHNISCHE_HILFELEISTUNG_ID,
+    PRUEFUNGSMODUS_ID,
 } from './services/topicsHelper'
 import Lernunterlagen from './pages/Lernunterlagen'
 import Aktuelles from './pages/Aktuelles'
@@ -40,16 +41,19 @@ const generalPages = [
     { path: '/aktuelles', element: <Aktuelles /> },
     { path: '/lernunterlagen', element: <Lernunterlagen /> },
     {
-        path: '/leistungspruefung',
+        path: '/lernunterlagen/leistungspruefung',
         element: <Leistungspruefung sub_topic_id={LEISTUNGSPRUEFUNG_ID} />,
     },
-    { path: MTA_HREF, element: <Mta sub_topic_id={TRUPPAUSBILDUNG_ID} /> },
     {
-        path: '/fahrzeugkunde',
+        path: MTA_HREF,
+        element: <Truppausbildung sub_topic_id={TRUPPAUSBILDUNG_ID} />,
+    },
+    {
+        path: '/lernunterlagen/fahrzeugkunde',
         element: <Fahrzeugkunde sub_topic_id={FAHRZEUGKUNDE_ID} />,
     },
     {
-        path: '/teilnehmerunterlagen',
+        path: '/lernunterlagen/truppausbildung/teilnehmerunterlagen',
         element: (
             <PdfViewer
                 sub_topic_id={TEILNEHMERUNTERLAGEN_ID}
@@ -61,27 +65,64 @@ const generalPages = [
 
 // Array of quiz routes
 const quizRoutes = [
-    { path: '/quiz/abc', id: ABC_ID },
     {
-        path: '/quiz/antriebstechnikenautos',
+        path: '/lernunterlagen/truppausbildung/quiz/pruefungsmodus',
+        id: PRUEFUNGSMODUS_ID,
+    },
+    { path: '/lernunterlagen/truppausbildung/quiz/abc', id: ABC_ID },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/antriebstechnikenautos',
         id: ALTERNATIVE_ANTRIEBSTECHNIKEN_ID,
     },
-    { path: '/quiz/brennenundloeschen', id: BRENNEN_UND_LOESCHEN_ID },
-    { path: '/quiz/fahrzeugkunde', id: FAHRZEUGKUNDE_QUIZ_ID },
-    { path: '/quiz/fahrzeugtechnik', id: FAHRZEUGTECHNIK_ID },
-    { path: '/quiz/funk', id: FUNK_ID },
-    { path: '/quiz/geraetekunde', id: GERAETEKUNDE_ID },
     {
-        path: '/quiz/hilfeleistungloescheinsatz',
+        path: '/lernunterlagen/truppausbildung/quiz/brennenundloeschen',
+        id: BRENNEN_UND_LOESCHEN_ID,
+    },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/fahrzeugkunde',
+        id: FAHRZEUGKUNDE_QUIZ_ID,
+    },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/fahrzeugtechnik',
+        id: FAHRZEUGTECHNIK_ID,
+    },
+    { path: '/lernunterlagen/truppausbildung/quiz/funk', id: FUNK_ID },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/geraetekunde',
+        id: GERAETEKUNDE_ID,
+    },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/hilfeleistungloescheinsatz',
         id: HILFELEISTUNGS_LOESCHEINSATZ_ID,
     },
-    { path: '/quiz/loescheinsatz', id: LOESCHEINSATZ_ID },
-    { path: '/quiz/rechtsgrundlagen', id: RECHTSGRUNDLAGEN_ID },
-    { path: '/quiz/rettungvonpersonen', id: RETTUNG_VON_PERSONEN_ID },
-    { path: '/quiz/sicherngegenabsturz', id: SICHERN_GEGEN_ABSTURZ_ID },
-    { path: '/quiz/technischehilfeleistung', id: TECHNISCHE_HILFELEISTUNG_ID },
-    { path: '/quiz/verhaltenbeigefahr', id: VERHALTEN_BEI_GEFAHR_ID },
-    { path: '/quiz/verhaltenimeinsatz', id: VERHALTEN_IM_EINSATZ },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/loescheinsatz',
+        id: LOESCHEINSATZ_ID,
+    },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/rechtsgrundlagen',
+        id: RECHTSGRUNDLAGEN_ID,
+    },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/rettungvonpersonen',
+        id: RETTUNG_VON_PERSONEN_ID,
+    },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/sicherngegenabsturz',
+        id: SICHERN_GEGEN_ABSTURZ_ID,
+    },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/technischehilfeleistung',
+        id: TECHNISCHE_HILFELEISTUNG_ID,
+    },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/verhaltenbeigefahr',
+        id: VERHALTEN_BEI_GEFAHR_ID,
+    },
+    {
+        path: '/lernunterlagen/truppausbildung/quiz/verhaltenimeinsatz',
+        id: VERHALTEN_IM_EINSATZ,
+    },
 ]
 
 function App() {
@@ -129,6 +170,7 @@ function App() {
                                         root_href={MTA_HREF}
                                         topic_name={'Zurück zu Truppausbildung'}
                                         questions_sub_topics_id={id}
+                                        isExamMode={id === PRUEFUNGSMODUS_ID}
                                     />
                                 }
                             />

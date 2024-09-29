@@ -3,8 +3,9 @@ import supabase from '../services/supabaseClient'
 import LinkButton from '../components/atoms/LInkButton'
 import SubPageImage from '../components/atoms/SubPageImage'
 import TopicHeadline from '../components/atoms/Seperator'
+import { PRUEFUNGSMODUS_ID } from '../services/topicsHelper'
 
-const Mta = ({ sub_topic_id }) => {
+const Truppausbildung = ({ sub_topic_id }) => {
     useEffect(() => {
         getTopics()
         getQuizTopics()
@@ -42,12 +43,20 @@ const Mta = ({ sub_topic_id }) => {
             </div>
             <TopicHeadline text={'💭 Quiz 💭'} />
             <div className="flex py-4 md:text-xl text-lg flex-col space-y-4">
-                {quizTopics.map((topic, index) => (
-                    <LinkButton key={index} topic={topic} />
-                ))}
+                {quizTopics
+                    .sort((a, b) =>
+                        a.id === PRUEFUNGSMODUS_ID
+                            ? -1
+                            : b.id === PRUEFUNGSMODUS_ID
+                              ? 1
+                              : 0
+                    ) // Sorting to put id 30 at the top
+                    .map((topic, index) => (
+                        <LinkButton key={index} topic={topic} />
+                    ))}
             </div>
         </div>
     )
 }
 
-export default Mta
+export default Truppausbildung
