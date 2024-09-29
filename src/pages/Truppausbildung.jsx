@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import supabase from '../services/supabaseClient'
-import LinkButton from '../components/atoms/LinkButton'
+import LinkButton from '../components/atoms/LInkButton'
 import SubPageImage from '../components/atoms/SubPageImage'
 import TopicHeadline from '../components/atoms/Seperator'
 import { PRUEFUNGSMODUS_ID } from '../services/topicsHelper'

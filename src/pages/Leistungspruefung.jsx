@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import supabase from '../services/supabaseClient'
 import SubPageImage from '../components/atoms/SubPageImage'
-import LinkButton from '../components/atoms/LinkButton'
+import LinkButton from '../components/atoms/LInkButton'
 
 const Leistungspruefung = ({ sub_topic_id }) => {
     useEffect(() => {

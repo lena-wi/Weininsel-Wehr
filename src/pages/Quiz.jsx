@@ -4,7 +4,7 @@ import SubPageImage from '../components/atoms/SubPageImage'
 import { Dialog } from '@headlessui/react'
 import LoadingIndicator from '../components/atoms/LoadingIndicator'
 import { ImageSearch } from '@mui/icons-material'
-import LinkButton from '../components/atoms/LinkButton'
+import LinkButton from '../components/atoms/LInkButton'
 
 const imageCache = new Map()
 
