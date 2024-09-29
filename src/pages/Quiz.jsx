@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import supabase from '../services/supabaseClient'
 import LinkButton from '../components/atoms/LInkButton'
 import SubPageImage from '../components/atoms/SubPageImage'
@@ -15,6 +15,8 @@ const Quiz = ({
     const [score, setScore] = useState(0)
     const [showCorrectAnswer, setShowCorrectAnswer] = useState(false)
     const [showNextButton, setShowNextButton] = useState(false)
+
+    const nextButtonRef = useRef(null)
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -74,10 +76,17 @@ const Quiz = ({
         setCurrentQuestionIndex(currentQuestionIndex + 1)
     }
 
+    useEffect(() => {
+        // Scroll to the Next Question button when it becomes visible
+        if (showNextButton && nextButtonRef.current) {
+            nextButtonRef.current.scrollIntoView({ behavior: 'smooth' })
+        }
+    }, [showNextButton])
+
     const question = questions[currentQuestionIndex]
 
     return (
-        <div className="quiz-container p-4 flex flex-col items-start">
+        <div className="quiz-container p-4 overflow-y-auto flex flex-col items-start">
             {questions.length === 0 ? (
                 <p>Lädt fragen ...</p>
             ) : (
@@ -119,7 +128,10 @@ const Quiz = ({
                         </div>
 
                         {showNextButton && (
-                            <div>
+                            <div
+                                className="next-question-button"
+                                ref={nextButtonRef}
+                            >
                                 <button
                                     onClick={handleNextQuestion}
                                     className="px-6 mt-6 w-full h-16 bg-white text-black font-semibold rounded-lg shadow-lg hover:cursor-pointer"
