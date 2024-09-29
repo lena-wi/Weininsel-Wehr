@@ -50,7 +50,7 @@ const Truppausbildung = ({ sub_topic_id }) => {
                             : b.id === PRUEFUNGSMODUS_ID
                               ? 1
                               : 0
-                    ) // Sorting to put id 30 at the top
+                    ) // Sorting to put PRUEFUNGSMODUS_ID at the top
                     .map((topic, index) => (
                         <LinkButton key={index} topic={topic} />
                     ))}
