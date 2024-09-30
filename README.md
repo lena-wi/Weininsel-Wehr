@@ -95,7 +95,6 @@ This web application is designed and optimized for mobile use, providing essenti
 
 -   **Frontend**: React, Vite, Tailwind CSS, Headless UI
 -   **Backend**: Supabase (for database and authentication)
--   **Mobile Optimization**: Fully responsive design using CSS Grid and Flexbox for a seamless experience across devices.
 -   **Python Script**: Utilizes Supabase for uploading PDF files and managing data.
 -   **Google Calendar API**: Integrated to fetch and display upcoming events.
 
