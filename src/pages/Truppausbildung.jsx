@@ -1,47 +1,79 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import supabase from '../services/supabaseClient'
 import LinkButton from '../components/atoms/LInkButton'
 import SubPageImage from '../components/atoms/SubPageImage'
 import TopicHeadline from '../components/atoms/Seperator'
+import LoadingIndicator from '../components/atoms/LoadingIndicator'
 import { PRUEFUNGSMODUS_ID } from '../services/topicsHelper'
 
 const Truppausbildung = ({ sub_topic_id }) => {
-    useEffect(() => {
-        getTopics()
-        getQuizTopics()
-    }, [])
-
-    async function getTopics() {
-        const { data } = await supabase
-            .from('topics')
-            .select()
-            .eq('sub_topic_id', sub_topic_id)
-            .eq('is_active', true)
-            .eq('is_quiz_topic', false)
-        setTopics(data)
-    }
     const [topics, setTopics] = useState([])
-
-    async function getQuizTopics() {
-        const { data } = await supabase
-            .from('topics')
-            .select()
-            .eq('sub_topic_id', sub_topic_id)
-            .eq('is_quiz_topic', true)
-        setQuizTopics(data)
-    }
     const [quizTopics, setQuizTopics] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
 
-    return (
-        <div className="flex flex-col items-center justify-center p-4">
-            <SubPageImage />
-            <TopicHeadline text={'📄 Dokumente 📄'} />
+    useEffect(() => {
+        const fetchTopics = async () => {
+            setLoading(true)
+            try {
+                const [
+                    { data: topicsData, error: topicsError },
+                    { data: quizData, error: quizError },
+                ] = await Promise.all([
+                    supabase
+                        .from('topics')
+                        .select()
+                        .eq('sub_topic_id', sub_topic_id)
+                        .eq('is_active', true)
+                        .eq('is_quiz_topic', false),
+                    supabase
+                        .from('topics')
+                        .select()
+                        .eq('sub_topic_id', sub_topic_id)
+                        .eq('is_quiz_topic', true),
+                ])
+
+                if (topicsError || quizError)
+                    throw new Error('Fehler beim Laden der Themen')
+
+                setTopics(topicsData || [])
+                setQuizTopics(quizData || [])
+            } catch (err) {
+                console.error(err)
+                setError(true)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchTopics()
+    }, [sub_topic_id])
+
+    const renderContent = () => {
+        if (loading) return <LoadingIndicator />
+        if (error)
+            return (
+                <p className="text-lg text-red-500">
+                    Fehler beim Laden der Themen.
+                </p>
+            )
+        if (topics.length === 0)
+            return <p className="text-lg mt-4">Keine Themen verfügbar.</p>
+
+        return (
             <div className="flex py-4 md:text-xl text-lg flex-col space-y-4">
                 {topics.map((topic, index) => (
                     <LinkButton key={index} topic={topic} />
                 ))}
             </div>
-            <TopicHeadline text={'💭 Quiz 💭'} />
+        )
+    }
+
+    const renderQuizContent = () => {
+        if (quizTopics.length === 0)
+            return <p className="text-lg mt-4">Keine Quiz Themen verfügbar.</p>
+
+        return (
             <div className="flex py-4 md:text-xl text-lg flex-col space-y-4">
                 {quizTopics
                     .sort((a, b) =>
@@ -50,11 +82,21 @@ const Truppausbildung = ({ sub_topic_id }) => {
                             : b.id === PRUEFUNGSMODUS_ID
                               ? 1
                               : 0
-                    ) // Sorting to put PRUEFUNGSMODUS_ID at the top
+                    )
                     .map((topic, index) => (
                         <LinkButton key={index} topic={topic} />
                     ))}
             </div>
+        )
+    }
+
+    return (
+        <div className="flex flex-col items-center justify-center p-4">
+            <SubPageImage />
+            <TopicHeadline text={'📄 Dokumente 📄'} />
+            {renderContent()}
+            <TopicHeadline text={'💭 Quiz 💭'} />
+            {renderQuizContent()}
         </div>
     )
 }
