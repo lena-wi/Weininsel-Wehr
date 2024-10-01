@@ -3,6 +3,7 @@ import { pdfjs, Document, Page } from 'react-pdf'
 import supabase from '../../services/supabaseClient'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
+import LoadingIndicator from '../atoms/LoadingIndicator'
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -18,12 +19,12 @@ const PdfViewer = ({ sub_topic_id, table_name, is_current_topic = false }) => {
 
     useEffect(() => {
         const fetchPdfUrl = async () => {
-            setLoading(true) // Start loading
-            setError(null) // Reset error state
+            setLoading(true)
+            setError(null)
 
             if (!sub_topic_id) {
                 console.error('PDF ID is required to fetch the PDF URL.')
-                setLoading(false) // Stop loading
+                setLoading(false)
                 return
             }
 
@@ -41,12 +42,12 @@ const PdfViewer = ({ sub_topic_id, table_name, is_current_topic = false }) => {
                     throw new Error(error?.message || 'PDF URL not found.')
                 }
 
-                setPdfUrl(data.url) // Set the PDF URL
+                setPdfUrl(data.url)
             } catch (err) {
-                setError(err.message) // Set error state
+                setError(err.message)
                 console.error('Error fetching PDF URL:', err)
             } finally {
-                setLoading(false) // Stop loading
+                setLoading(false)
             }
         }
 
@@ -70,7 +71,7 @@ const PdfViewer = ({ sub_topic_id, table_name, is_current_topic = false }) => {
     return (
         <div className="pdf-viewer bg-white w-100 flex justify-center">
             {loading ? (
-                <p>Lädt Pdf...</p>
+                <LoadingIndicator />
             ) : error ? (
                 <p>Error: {error}</p>
             ) : (

@@ -7,7 +7,7 @@ const LinkButton = ({ topic }) => {
         <Link key={topic.id} to={topic.href}>
             <div
                 key={topic.id}
-                className="px-6 py-4 text-center bg-white text-black font-light rounded-lg shadow-lg transition-colors hover:cursor-pointer"
+                className="px-6 py-4 border opacity-85 text-center text-black font-light rounded-lg shadow-lg transition-colors hover:cursor-pointer"
             >
                 {topic.name}
             </div>

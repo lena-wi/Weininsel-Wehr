@@ -6,6 +6,8 @@ import TopicHeadline from '../components/atoms/Seperator'
 import LoadingIndicator from '../components/atoms/LoadingIndicator'
 import { PRUEFUNGSMODUS_ID } from '../services/topicsHelper'
 
+const CACHE_TIME_LIMIT = 20 * 60 * 1000 // 20 minutes in milliseconds
+
 const Truppausbildung = ({ sub_topic_id }) => {
     const [topics, setTopics] = useState([])
     const [quizTopics, setQuizTopics] = useState([])
@@ -16,28 +18,35 @@ const Truppausbildung = ({ sub_topic_id }) => {
         const fetchTopics = async () => {
             setLoading(true)
             try {
-                const [
-                    { data: topicsData, error: topicsError },
-                    { data: quizData, error: quizError },
-                ] = await Promise.all([
-                    supabase
-                        .from('topics')
-                        .select()
-                        .eq('sub_topic_id', sub_topic_id)
-                        .eq('is_active', true)
-                        .eq('is_quiz_topic', false),
-                    supabase
-                        .from('topics')
-                        .select()
-                        .eq('sub_topic_id', sub_topic_id)
-                        .eq('is_quiz_topic', true),
-                ])
+                const cachedData = getCachedTopics(sub_topic_id)
+                if (cachedData) {
+                    setTopics(cachedData.topics)
+                    setQuizTopics(cachedData.quizTopics)
+                } else {
+                    const [
+                        { data: topicsData, error: topicsError },
+                        { data: quizData, error: quizError },
+                    ] = await Promise.all([
+                        supabase
+                            .from('topics')
+                            .select()
+                            .eq('sub_topic_id', sub_topic_id)
+                            .eq('is_active', true)
+                            .eq('is_quiz_topic', false),
+                        supabase
+                            .from('topics')
+                            .select()
+                            .eq('sub_topic_id', sub_topic_id)
+                            .eq('is_quiz_topic', true),
+                    ])
 
-                if (topicsError || quizError)
-                    throw new Error('Fehler beim Laden der Themen')
+                    if (topicsError || quizError)
+                        throw new Error('Fehler beim Laden der Themen')
 
-                setTopics(topicsData || [])
-                setQuizTopics(quizData || [])
+                    setTopics(topicsData || [])
+                    setQuizTopics(quizData || [])
+                    cacheTopics(sub_topic_id, topicsData, quizData)
+                }
             } catch (err) {
                 console.error(err)
                 setError(true)
@@ -48,6 +57,33 @@ const Truppausbildung = ({ sub_topic_id }) => {
 
         fetchTopics()
     }, [sub_topic_id])
+
+    const getCachedTopics = (sub_topic_id) => {
+        const cachedData = localStorage.getItem(`topics-${sub_topic_id}`)
+        if (cachedData) {
+            const { topics, quizTopics, timestamp } = JSON.parse(cachedData)
+            const currentTime = new Date().getTime()
+
+            if (currentTime - timestamp < CACHE_TIME_LIMIT) {
+                return { topics, quizTopics }
+            } else {
+                localStorage.removeItem(`topics-${sub_topic_id}`)
+            }
+        }
+        return null
+    }
+
+    const cacheTopics = (sub_topic_id, topics, quizTopics) => {
+        const dataToCache = {
+            topics,
+            quizTopics,
+            timestamp: new Date().getTime(),
+        }
+        localStorage.setItem(
+            `topics-${sub_topic_id}`,
+            JSON.stringify(dataToCache)
+        )
+    }
 
     const renderContent = () => {
         if (loading) return <LoadingIndicator />

@@ -7,64 +7,125 @@ import { ImageSearch } from '@mui/icons-material'
 import LinkButton from '../components/atoms/LInkButton'
 
 const imageCache = new Map()
+const CACHE_TIME_LIMIT = 20 * 60 * 1000 // 20 minutes in milliseconds
 
-const Quiz = ({
-    questions_sub_topics_id,
-    topic_name,
-    root_href,
-    isExamMode,
-}) => {
+const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
     const [questions, setQuestions] = useState([])
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
     const [selectedAnswer, setSelectedAnswer] = useState(null)
     const [score, setScore] = useState(0)
     const [showCorrectAnswer, setShowCorrectAnswer] = useState(false)
     const [showNextButton, setShowNextButton] = useState(false)
-    const [loadingQuestions, setLoadingQuestions] = useState(true) // Loading state for questions
-    const [loadingImages, setLoadingImages] = useState(false) // Loading state for images
+    const [loadingQuestions, setLoadingQuestions] = useState(true)
+    const [loadingImages, setLoadingImages] = useState(false)
     const [showImageDialog, setShowImageDialog] = useState(false)
-    const [imageToShow, setImageToShow] = useState(null) // Store the image to show in the dialog
+    const [imageToShow, setImageToShow] = useState(null)
 
     const nextButtonRef = useRef(null)
 
     useEffect(() => {
         const fetchQuestions = async () => {
-            setLoadingQuestions(true) // Show loading spinner for questions
+            setLoadingQuestions(true)
             try {
-                const query = supabase
-                    .from('questions_with_answers')
-                    .select(`id, questions`)
+                const cachedData = getCachedQuestions()
 
-                const { data, error } = isExamMode
-                    ? await query
-                    : await query.eq(
-                          'questions_sub_topics_id',
-                          questions_sub_topics_id
-                      )
+                if (cachedData && !isExamMode) {
+                    setQuestions(cachedData.questions)
+                    // Set the images if available in cache
+                    if (cachedData.images) {
+                        cachedData.questions.forEach((question, index) => {
+                            question.image = cachedData.images[index]
+                        })
+                    }
+                } else {
+                    const query = supabase
+                        .from('questions_with_answers')
+                        .select(`id, questions`)
 
-                if (error) throw new Error('Error fetching questions:', error)
+                    const { data, error } = isExamMode
+                        ? await query
+                        : await query.eq(
+                              'questions_sub_topics_id',
+                              questions_sub_topics_id
+                          )
 
-                const fetchedQuestions = data
-                    .map((entry) => entry.questions)
-                    .flat()
-                const fetchedIds = data.map((entry) => entry.id).flat()
+                    console.log('Fetched data:', data)
+                    if (error)
+                        throw new Error('Error fetching questions:', error)
 
-                const processedQuestions = isExamMode
-                    ? fetchedQuestions
-                          .sort(() => Math.random() - 0.5)
-                          .slice(0, 50)
-                    : fetchedQuestions
+                    const fetchedQuestions = data
+                        .map((entry) => entry.questions)
+                        .flat()
+                    const fetchedIds = data.map((entry) => entry.id).flat()
 
-                await fetchImages(processedQuestions, fetchedIds)
+                    console.log('Fetched Questions:', fetchedQuestions)
+                    console.log('Fetched IDs:', fetchedIds)
+
+                    const processedQuestions = isExamMode
+                        ? fetchedQuestions
+                              .sort(() => Math.random() - 0.5)
+                              .slice(0, 50)
+                        : fetchedQuestions
+
+                    // Fetch images for the processed questions
+                    const images = await fetchImages(
+                        processedQuestions,
+                        fetchedIds
+                    )
+
+                    // Cache the questions along with their images if not in exam mode
+                    if (!isExamMode) {
+                        cacheQuestions(processedQuestions, images)
+                    }
+
+                    // Set the questions with their images
+                    setQuestions(
+                        processedQuestions.map((q, index) => ({
+                            ...q,
+                            image: images[index],
+                        }))
+                    )
+                }
             } catch (error) {
                 console.error('Error in fetchQuestions:', error)
             } finally {
-                setLoadingQuestions(false) // Hide loading spinner
+                setLoadingQuestions(false)
             }
         }
 
         fetchQuestions()
     }, [questions_sub_topics_id, isExamMode])
+
+    const getCachedQuestions = () => {
+        const cachedData = localStorage.getItem(
+            `quiz-questions-${questions_sub_topics_id}`
+        )
+        if (cachedData) {
+            const { questions, images, timestamp } = JSON.parse(cachedData)
+            const currentTime = new Date().getTime()
+
+            if (currentTime - timestamp < CACHE_TIME_LIMIT) {
+                return { questions, images }
+            } else {
+                localStorage.removeItem(
+                    `quiz-questions-${questions_sub_topics_id}`
+                )
+            }
+        }
+        return null
+    }
+
+    const cacheQuestions = (questions, images) => {
+        const dataToCache = {
+            questions,
+            images,
+            timestamp: new Date().getTime(),
+        }
+        localStorage.setItem(
+            `quiz-questions-${questions_sub_topics_id}`,
+            JSON.stringify(dataToCache)
+        )
+    }
 
     const getImage = async (imageUrl) => {
         if (imageCache.has(imageUrl)) {
@@ -79,38 +140,29 @@ const Quiz = ({
     }
 
     const fetchImages = async (questions, ids) => {
-        setLoadingImages(true) // Show loading spinner for images
-        try {
-            const questionsWithImages = await Promise.all(
-                questions.map(async (question, index) => {
-                    const { data: imageData, error: imageError } =
-                        await supabase
-                            .from('questions_images')
-                            .select('url')
-                            .eq('questions_id', ids[index])
+        setLoadingImages(true)
+        const images = await Promise.all(
+            questions.map(async (question, index) => {
+                const { data: imageData, error: imageError } = await supabase
+                    .from('questions_images')
+                    .select('url')
+                    .eq('questions_id', ids[index])
 
-                    if (imageError) {
-                        console.error('Error fetching images:', imageError)
-                        return question
-                    }
+                console.log('Image Data:', imageData) // Log image data
+                if (imageError) {
+                    console.error('Error fetching images:', imageError)
+                    return null // Return null if there's an error
+                }
 
-                    const imageUrl =
-                        imageData.length > 0
-                            ? await getImage(imageData[0].url)
-                            : null // Add image URL if available
-                    return {
-                        ...question,
-                        image: imageUrl,
-                    }
-                })
-            )
+                // Fetch image if exists
+                return imageData.length > 0
+                    ? await getImage(imageData[0].url)
+                    : null
+            })
+        )
 
-            setQuestions(questionsWithImages)
-        } catch (error) {
-            console.error('Error in fetchImages:', error)
-        } finally {
-            setLoadingImages(false) // Hide loading spinner for images
-        }
+        setLoadingImages(false)
+        return images // Return the array of image URLs
     }
 
     const handleAnswerClick = (answer) => {
@@ -144,15 +196,15 @@ const Quiz = ({
     return (
         <div className="quiz-container p-4 overflow-y-auto flex flex-col items-start">
             {loadingQuestions ? (
-                <LoadingIndicator /> // Show loading spinner while fetching questions
+                <LoadingIndicator />
             ) : loadingImages ? (
-                <LoadingIndicator /> // Show loading spinner while fetching images
+                <LoadingIndicator />
             ) : questions.length === 0 ? (
                 <p>Lädt fragen ...</p>
             ) : (
                 question && (
-                    <div className="question-answer-section space-y-6 w-full">
-                        <div className="question-container text-center bg-white p-6 rounded-lg shadow-md w-full text-xl text-black font-light items-center mb-4">
+                    <div className="question-answer-section w-full">
+                        <div className="question-container text-center rounded-md mb-14 font-bold bg-white border p-6 shadow-md w-full text-xl text-black items-center">
                             {question.questionText}
                             {question.image && (
                                 <div className="mt-2">
@@ -167,7 +219,7 @@ const Quiz = ({
                             )}
                         </div>
 
-                        <div className="answers-container grid grid-cols-1 gap-4 w-full">
+                        <div className="answers-container grid grid-cols-1 gap-6 w-full">
                             {question.answers.map((answer, index) => {
                                 const isCorrectAnswer = answer.score === 1
                                 const isSelectedAnswer =
@@ -175,9 +227,9 @@ const Quiz = ({
 
                                 const answerContainerClasses = `
                                     p-4 rounded-lg transition-all duration-250
-                                    ${isCorrectAnswer && showCorrectAnswer ? 'bg-answerright' : ''}
+                                    ${isCorrectAnswer && showCorrectAnswer ? 'bg-green' : ''}
                                     ${!isCorrectAnswer && isSelectedAnswer ? 'bg-red' : ''}
-                                    ${showCorrectAnswer && isCorrectAnswer && !isSelectedAnswer ? 'bg-answerright' : ''}
+                                    ${showCorrectAnswer && isCorrectAnswer && !isSelectedAnswer ? 'bg-green' : ''}
                                     ${showCorrectAnswer && !isCorrectAnswer && isSelectedAnswer ? 'opacity-70' : ''}
                                     ${isSelectedAnswer ? 'border-black border-8' : 'border-[1px]'}
                                 `
@@ -205,7 +257,7 @@ const Quiz = ({
                             >
                                 <button
                                     onClick={handleNextQuestion}
-                                    className="px-6 mt-6 w-full h-16 bg-white text-black font-semibold rounded-lg shadow-lg hover:cursor-pointer"
+                                    className="px-6 mt-14 w-full h-16 border bg-answerblack text-white font-semibold rounded-lg shadow-lg hover:cursor-pointer"
                                 >
                                     Nächste Frage
                                 </button>
@@ -218,49 +270,33 @@ const Quiz = ({
             {currentQuestionIndex >= questions.length && !loadingQuestions && (
                 <div className="flex w-full flex-col items-center justify-center transition-colors">
                     <SubPageImage />
-                    <h2 className="result-text pt-2 text-4xl text-center font-bold text-white mb-4">
-                        Quiz Geschafft!
+                    <h2 className="result-text pt-2 text-4xl text-center font-bold text-white mb-6">
+                        Ergebnis: {score}/{questions.length}
                     </h2>
-                    <p className="score-text text-2xl text-gray-300 mb-6">
-                        Deine Punktzahl:{' '}
-                        <span className="font-bold text-sec">{score}</span> von{' '}
-                        <span className="font-bold text-sec">
-                            {questions.length}
-                        </span>
-                    </p>
                     <LinkButton
-                        topic={{
-                            id: 1,
-                            name: topic_name,
-                            href: root_href,
-                        }}
+                        label="Zurück"
+                        href={root_href}
+                        className="mb-6"
                     />
                 </div>
             )}
 
-            {/* Image dialog popup */}
             <Dialog
                 open={showImageDialog}
                 onClose={() => setShowImageDialog(false)}
-                className="relative z-50 bg-white"
+                className="relative z-50"
             >
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-75"
+                    className="fixed inset-0 bg-black bg-opacity-50"
                     aria-hidden="true"
                 />
                 <div className="fixed inset-0 flex items-center justify-center p-4">
-                    <Dialog.Panel className="w-full max-w-md">
+                    <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-4">
                         <img
                             src={imageToShow}
                             alt="Question related"
-                            className="rounded-lg"
+                            className="w-full h-auto"
                         />
-                        <button
-                            onClick={() => setShowImageDialog(false)}
-                            className="mt-4 px-4 py-2 bg-white rounded-md shadow-lg"
-                        >
-                            Schließen
-                        </button>
                     </Dialog.Panel>
                 </div>
             </Dialog>

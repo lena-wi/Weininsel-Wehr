@@ -89,10 +89,10 @@ const Calendar = () => {
             <h3 className="text-2xl font-light text-center mb-4">
                 Anstehende Termine:
             </h3>
-            <div className="bg-white shadow-md rounded-lg p-3 max-h-64 h-auto overflow-y-auto">
+            <div className="bg-white border text-center opacity-85 shadow-md rounded-lg p-3 max-h-64 h-auto overflow-y-auto">
                 <Suspense fallback={<div>Loading...</div>}>
                     {loading ? (
-                        <LoadingIndicator /> // Show the loading indicator if loading is true
+                        <LoadingIndicator />
                     ) : events.length > 0 ? (
                         <ul>{renderedEvents}</ul>
                     ) : (

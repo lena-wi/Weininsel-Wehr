@@ -150,7 +150,7 @@ function App() {
 
     return (
         <Router>
-            <div className="weininsel-wehr-app overflow-auto h-screen bg-green">
+            <div className="weininsel-wehr-app overflow-auto h-screen bg-white">
                 <Header />
                 <div className="flex-grow overflow-hidden">
                     {/* Adjust margin here */}
@@ -168,7 +168,6 @@ function App() {
                                 element={
                                     <Quiz
                                         root_href={MTA_HREF}
-                                        topic_name={'Zurück zu Truppausbildung'}
                                         questions_sub_topics_id={id}
                                         isExamMode={id === PRUEFUNGSMODUS_ID}
                                     />

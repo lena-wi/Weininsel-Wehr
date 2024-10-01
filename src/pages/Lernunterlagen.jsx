@@ -3,6 +3,7 @@ import supabase from '../services/supabaseClient'
 import LinkButton from '../components/atoms/LInkButton'
 import SubPageImage from '../components/atoms/SubPageImage'
 import LoadingIndicator from '../components/atoms/LoadingIndicator'
+import Seperator from '../components/atoms/Seperator'
 
 const Lernunterlagen = ({ main_topics_id }) => {
     const [topics, setTopics] = useState([])
@@ -56,6 +57,9 @@ const Lernunterlagen = ({ main_topics_id }) => {
     return (
         <div className="flex flex-col items-center justify-center">
             <SubPageImage />
+            <div className="pt-2 pb-5">
+                <Seperator text="🚒 Themen 🚒" />
+            </div>
             {renderContent()}
         </div>
     )
