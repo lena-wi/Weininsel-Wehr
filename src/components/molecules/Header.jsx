@@ -1,16 +1,58 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import LoadingIndicator from '../atoms/LoadingIndicator'
 
 function Header() {
     const navigate = useNavigate()
     const location = useLocation()
     const [loadingImage, setLoadingImage] = useState(true)
+    const [imageSrc, setImageSrc] = useState(null)
+    const IMAGE_URL =
+        'https://mipbtnsxhpoikpsltmtr.supabase.co/storage/v1/object/public/Weininsel-Wehr/ffwlogo.webp'
+    const CACHE_KEY = 'headerLogoCache'
+    const CACHE_DURATION = 20 * 60 * 1000 // 20 minutes in milliseconds
 
-    const handleImageLoad = () => {
-        setLoadingImage(false)
+    // Check and load the image from cache if available and not expired
+    const loadImageFromCache = () => {
+        const cachedData = sessionStorage.getItem(CACHE_KEY)
+        if (cachedData) {
+            const { src, timestamp } = JSON.parse(cachedData)
+            if (Date.now() - timestamp < CACHE_DURATION) {
+                setImageSrc(src)
+                setLoadingImage(false)
+                return true
+            }
+        }
+        return false
     }
+
+    // Cache the image in local storage
+    const cacheImage = (imageURL) => {
+        sessionStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({ src: imageURL, timestamp: Date.now() })
+        )
+    }
+
+    useEffect(() => {
+        const cached = loadImageFromCache()
+
+        if (!cached) {
+            // If no valid cache, load the image and cache it
+            const img = new Image()
+            img.src = IMAGE_URL
+            img.onload = () => {
+                setImageSrc(IMAGE_URL)
+                setLoadingImage(false)
+                cacheImage(IMAGE_URL)
+            }
+            img.onerror = (err) => {
+                console.error('Error loading image:', err)
+                setLoadingImage(false)
+            }
+        }
+    }, [])
 
     return (
         <header className="shadow-lg mb-4 py-1 lg:py-4 bg-green transition-colors">
@@ -36,12 +78,13 @@ function Header() {
                                     <LoadingIndicator />
                                 </div>
                             )}
-                            <img
-                                src="https://mipbtnsxhpoikpsltmtr.supabase.co/storage/v1/object/public/Weininsel-Wehr/ffwlogo.webp"
-                                alt="Logo"
-                                className={`w-14 opacity-80 object-fit ${loadingImage ? 'hidden' : 'block'}`}
-                                onLoad={handleImageLoad}
-                            />
+                            {imageSrc && (
+                                <img
+                                    src={imageSrc}
+                                    alt="Logo"
+                                    className={`w-14 opacity-80 object-fit ${loadingImage ? 'hidden' : 'block'}`}
+                                />
+                            )}
                         </div>
                     </Link>
                 </div>

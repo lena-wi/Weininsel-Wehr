@@ -5,9 +5,9 @@ import { Dialog } from '@headlessui/react'
 import LoadingIndicator from '../components/atoms/LoadingIndicator'
 import { ImageSearch } from '@mui/icons-material'
 import LinkButton from '../components/atoms/LInkButton'
+import { CACHE_TIME_LIMIT } from '../services/globalConsts'
 
 const imageCache = new Map()
-const CACHE_TIME_LIMIT = 20 * 60 * 1000 // 20 minutes in milliseconds
 
 const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
     const [questions, setQuestions] = useState([])
@@ -97,7 +97,7 @@ const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
     }, [questions_sub_topics_id, isExamMode])
 
     const getCachedQuestions = () => {
-        const cachedData = localStorage.getItem(
+        const cachedData = sessionStorage.getItem(
             `quiz-questions-${questions_sub_topics_id}`
         )
         if (cachedData) {
@@ -107,7 +107,7 @@ const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
             if (currentTime - timestamp < CACHE_TIME_LIMIT) {
                 return { questions, images }
             } else {
-                localStorage.removeItem(
+                sessionStorage.removeItem(
                     `quiz-questions-${questions_sub_topics_id}`
                 )
             }
@@ -121,7 +121,7 @@ const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
             images,
             timestamp: new Date().getTime(),
         }
-        localStorage.setItem(
+        sessionStorage.setItem(
             `quiz-questions-${questions_sub_topics_id}`,
             JSON.stringify(dataToCache)
         )

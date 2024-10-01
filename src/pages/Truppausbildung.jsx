@@ -5,8 +5,7 @@ import SubPageImage from '../components/atoms/SubPageImage'
 import TopicHeadline from '../components/atoms/Seperator'
 import LoadingIndicator from '../components/atoms/LoadingIndicator'
 import { PRUEFUNGSMODUS_ID } from '../services/topicsHelper'
-
-const CACHE_TIME_LIMIT = 20 * 60 * 1000 // 20 minutes in milliseconds
+import { CACHE_TIME_LIMIT } from '../services/globalConsts'
 
 const Truppausbildung = ({ sub_topic_id }) => {
     const [topics, setTopics] = useState([])
@@ -59,7 +58,7 @@ const Truppausbildung = ({ sub_topic_id }) => {
     }, [sub_topic_id])
 
     const getCachedTopics = (sub_topic_id) => {
-        const cachedData = localStorage.getItem(`topics-${sub_topic_id}`)
+        const cachedData = sessionStorage.getItem(`topics-${sub_topic_id}`)
         if (cachedData) {
             const { topics, quizTopics, timestamp } = JSON.parse(cachedData)
             const currentTime = new Date().getTime()
@@ -67,7 +66,7 @@ const Truppausbildung = ({ sub_topic_id }) => {
             if (currentTime - timestamp < CACHE_TIME_LIMIT) {
                 return { topics, quizTopics }
             } else {
-                localStorage.removeItem(`topics-${sub_topic_id}`)
+                sessionStorage.removeItem(`topics-${sub_topic_id}`)
             }
         }
         return null
@@ -79,7 +78,7 @@ const Truppausbildung = ({ sub_topic_id }) => {
             quizTopics,
             timestamp: new Date().getTime(),
         }
-        localStorage.setItem(
+        sessionStorage.setItem(
             `topics-${sub_topic_id}`,
             JSON.stringify(dataToCache)
         )
