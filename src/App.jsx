@@ -150,10 +150,12 @@ function App() {
 
     return (
         <Router>
-            <div className="weininsel-wehr-app overflow-auto h-screen bg-white">
-                <Header />
-                <div className="flex-grow overflow-hidden">
-                    {/* Adjust margin here */}
+            <div className="weininsel-wehr-app overflow-hidden h-screen bg-white flex flex-col">
+                {/* Make the header fixed */}
+                <Header className="fixed top-0 left-0 right-0" />
+
+                {/* Main content container with margin top to account for the fixed header height */}
+                <div className="flex-grow mt-6 overflow-auto">
                     <Routes>
                         {/* Render general pages */}
                         {generalPages.map(({ path, element }) => (

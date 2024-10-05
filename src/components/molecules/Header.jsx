@@ -21,9 +21,6 @@ function Header() {
     }
 
     useEffect(() => {
-        // Scroll to the top when the header component renders
-        window.scrollTo(0, 0)
-
         const cached = sessionStorage.getItem(CACHE_KEY)
 
         if (!cached) {
