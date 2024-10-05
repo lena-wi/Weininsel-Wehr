@@ -56,32 +56,7 @@ This web application is designed and optimized for mobile use, providing essenti
 
 ### Python PDF Upload Script
 
-1. Navigate to the Python script directory (if it's in a subfolder, for example, `python_script`):
-
-    ```bash
-    cd python_script
-    ```
-
-2. Install the required Python packages:
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. Set up the Supabase environment by creating a `.env` file with your Supabase credentials:
-
-    ```bash
-    VITE_SUPABASE_URL=your-supabase-url
-    SUPABASE_SERVICE_ROLE_KEY=your-supabase-key
-    SUPABASE_BUCKET_NAME=your-bucket-name
-    SUPABASE_RELATED_BUCKET_TABLE_NAME=your-table-name
-    ```
-
-4. Run the Python script:
-
-    ```bash
-    python uploadPdfsToTable.py
-    ```
+1. Check the scripts folder for the manual for Windows/Mac/Linux
 
 ## Usage
 
