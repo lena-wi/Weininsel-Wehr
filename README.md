@@ -29,7 +29,7 @@ This web application is designed and optimized for mobile use, providing essenti
 3. Install dependencies:
 
     ```bash
-    npm install
+    bun install
     ```
 
 4. Set up the Supabase environment by adding your Supabase credentials:
@@ -51,7 +51,7 @@ This web application is designed and optimized for mobile use, providing essenti
 6. Run the application locally:
 
     ```bash
-    npm run dev
+    bun run dev
     ```
 
 ### Python PDF Upload Script
