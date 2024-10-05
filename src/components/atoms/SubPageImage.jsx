@@ -7,25 +7,20 @@ const SubPageImage = () => {
     const IMAGE_URL =
         'https://mipbtnsxhpoikpsltmtr.supabase.co/storage/v1/object/public/Weininsel-Wehr/subLogo.webp'
     const CACHE_KEY = 'subPageImageCache'
-    const CACHE_DURATION = 20 * 60 * 1000 // 20 minutes in milliseconds
 
     useEffect(() => {
         // Function to load the image from cache or fetch a new one
         const loadImage = async () => {
             const cachedData = JSON.parse(sessionStorage.getItem(CACHE_KEY))
-            if (cachedData) {
-                const { src, timestamp } = cachedData
-                const isExpired = Date.now() - timestamp > CACHE_DURATION
 
-                if (!isExpired) {
-                    // Use cached image
-                    setImageSrc(src)
-                    setLoadingImage(false)
-                    return
-                }
+            if (cachedData) {
+                // Use cached image
+                setImageSrc(cachedData.src)
+                setLoadingImage(false)
+                return
             }
 
-            // If there's no valid cache, fetch the image and cache it
+            // If there's no cache, fetch the image and cache it
             try {
                 const response = await fetch(IMAGE_URL)
                 if (!response.ok) throw new Error('Image fetch failed')
@@ -35,12 +30,11 @@ const SubPageImage = () => {
                 setImageSrc(imageObjectURL)
                 setLoadingImage(false)
 
-                // Cache the new image URL in session storage
+                // Cache the image URL in session storage (no expiration)
                 sessionStorage.setItem(
                     CACHE_KEY,
                     JSON.stringify({
                         src: imageObjectURL,
-                        timestamp: Date.now(),
                     })
                 )
             } catch (error) {

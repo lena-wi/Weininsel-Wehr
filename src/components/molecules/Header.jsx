@@ -11,21 +11,6 @@ function Header() {
     const IMAGE_URL =
         'https://mipbtnsxhpoikpsltmtr.supabase.co/storage/v1/object/public/Weininsel-Wehr/ffwlogo.webp'
     const CACHE_KEY = 'headerLogoCache'
-    const CACHE_DURATION = 20 * 60 * 1000 // 20 minutes in milliseconds
-
-    // Check and load the image from cache if available and not expired
-    const loadImageFromCache = () => {
-        const cachedData = sessionStorage.getItem(CACHE_KEY)
-        if (cachedData) {
-            const { src, timestamp } = JSON.parse(cachedData)
-            if (Date.now() - timestamp < CACHE_DURATION) {
-                setImageSrc(src)
-                setLoadingImage(false)
-                return true
-            }
-        }
-        return false
-    }
 
     // Cache the image in local storage
     const cacheImage = (imageURL) => {
@@ -36,7 +21,10 @@ function Header() {
     }
 
     useEffect(() => {
-        const cached = loadImageFromCache()
+        // Scroll to the top when the header component renders
+        window.scrollTo(0, 0)
+
+        const cached = sessionStorage.getItem(CACHE_KEY)
 
         if (!cached) {
             // If no valid cache, load the image and cache it
@@ -51,6 +39,10 @@ function Header() {
                 console.error('Error loading image:', err)
                 setLoadingImage(false)
             }
+        } else {
+            const { src } = JSON.parse(cached)
+            setImageSrc(src)
+            setLoadingImage(false)
         }
     }, [])
 
