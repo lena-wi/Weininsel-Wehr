@@ -268,15 +268,18 @@ const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
             )}
 
             {currentQuestionIndex >= questions.length && !loadingQuestions && (
-                <div className="flex w-full flex-col items-center justify-center transition-colors">
-                    <SubPageImage />
-                    <h2 className="result-text pt-2 text-4xl text-center font-bold text-white mb-6">
-                        Ergebnis: {score}/{questions.length}
-                    </h2>
+                <div className="flex w-full flex-col items-center justify-center space-y-8">
+                    <div className="result-text text-3xl text-center font-bold text-black">
+                        <span>Ergebnis: </span>
+                        <span className="">{score}</span>
+                        <span> von {questions.length}</span>
+                    </div>
                     <LinkButton
-                        label="Zurück"
-                        href={root_href}
-                        className="mb-6"
+                        topic={{
+                            id: 1,
+                            href: root_href,
+                            name: 'Zurück zur Übersicht',
+                        }}
                     />
                 </div>
             )}
