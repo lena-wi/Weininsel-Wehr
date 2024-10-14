@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import supabase from '../services/supabaseClient'
-import SubPageImage from '../components/atoms/SubPageImage'
 import { Dialog } from '@headlessui/react'
 import LoadingIndicator from '../components/atoms/LoadingIndicator'
 import { ImageSearch } from '@mui/icons-material'
-import LinkButton from '../components/atoms/LInkButton'
 import { CACHE_TIME_LIMIT } from '../services/globalConsts'
+import ResultPage from './ResultPage'
 
 const imageCache = new Map()
 
@@ -268,20 +267,7 @@ const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
             )}
 
             {currentQuestionIndex >= questions.length && !loadingQuestions && (
-                <div className="flex w-full flex-col items-center justify-center space-y-8">
-                    <div className="result-text text-3xl text-center font-bold text-black">
-                        <span>Ergebnis: </span>
-                        <span className="">{score}</span>
-                        <span> von {questions.length}</span>
-                    </div>
-                    <LinkButton
-                        topic={{
-                            id: 1,
-                            href: root_href,
-                            name: 'Zurück zur Übersicht',
-                        }}
-                    />
-                </div>
+                <ResultPage score={score} questions={questions} rootHref={root_href} />
             )}
 
             <Dialog

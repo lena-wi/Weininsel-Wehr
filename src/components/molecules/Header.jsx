@@ -24,7 +24,7 @@ function Header() {
                     {location.pathname !== '/' && (
                         <div className="flex-shrink-0 cursor-pointer text-black opacity-65">
                             {staticPath ? (
-                                <Link to={MTA_HREF}>
+                                <Link to={'/lernunterlagen'}>
                                     <ArrowBackIcon fontSize="large" />
                                 </Link>
                             ) : (
