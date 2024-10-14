@@ -48,7 +48,6 @@ const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
                               questions_sub_topics_id
                           )
 
-                    console.log('Fetched data:', data)
                     if (error)
                         throw new Error('Error fetching questions:', error)
 
@@ -56,10 +55,6 @@ const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
                         .map((entry) => entry.questions)
                         .flat()
                     const fetchedIds = data.map((entry) => entry.id).flat()
-
-                    console.log('Fetched Questions:', fetchedQuestions)
-                    console.log('Fetched IDs:', fetchedIds)
-
                     const processedQuestions = isExamMode
                         ? fetchedQuestions
                               .sort(() => Math.random() - 0.5)
@@ -147,7 +142,6 @@ const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
                     .select('url')
                     .eq('questions_id', ids[index])
 
-                console.log('Image Data:', imageData) // Log image data
                 if (imageError) {
                     console.error('Error fetching images:', imageError)
                     return null // Return null if there's an error
@@ -267,7 +261,11 @@ const Quiz = ({ questions_sub_topics_id, root_href, isExamMode }) => {
             )}
 
             {currentQuestionIndex >= questions.length && !loadingQuestions && (
-                <ResultPage score={score} questions={questions} rootHref={root_href} />
+                <ResultPage
+                    score={score}
+                    questions={questions}
+                    rootHref={root_href}
+                />
             )}
 
             <Dialog
