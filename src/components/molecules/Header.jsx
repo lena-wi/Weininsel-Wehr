@@ -7,15 +7,20 @@ import { MTA_HREF } from '../../services/topicsHelper'
 function Header() {
     const navigate = useNavigate()
     const location = useLocation()
-    const [staticPath, setStaticPath] = useState(false)
+    const [isSpecialHref, setIsSpecialHref] = useState({
+        isMtaHref: false,
+        isLernunterlagen: false,
+    })
 
     useEffect(() => {
-        if (location.pathname === MTA_HREF) {
-            setStaticPath(true)
-        } else {
-            setStaticPath(false)
-        }
-    }, [location.pathname, logo])
+        const isMtaHref = location.pathname === MTA_HREF
+        const isLernunterlagen = location.pathname === '/lernunterlagen'
+        setIsSpecialHref({ isMtaHref, isLernunterlagen })
+    }, [location.pathname])
+
+    const handleBackNavigation = () => {
+        navigate(-1)
+    }
 
     return (
         <header className="shadow-lg mb-4 py-1 lg:py-4 bg-green transition-colors">
@@ -23,12 +28,16 @@ function Header() {
                 <div className="flex items-center h-16">
                     {location.pathname !== '/' && (
                         <div className="flex-shrink-0 cursor-pointer text-black opacity-65">
-                            {staticPath ? (
-                                <Link to={'/lernunterlagen'}>
+                            {isSpecialHref.isMtaHref ? (
+                                <Link to="/lernunterlagen">
+                                    <ArrowBackIcon fontSize="large" />
+                                </Link>
+                            ) : isSpecialHref.isLernunterlagen ? (
+                                <Link to="/">
                                     <ArrowBackIcon fontSize="large" />
                                 </Link>
                             ) : (
-                                <div onClick={() => navigate(-1)}>
+                                <div onClick={handleBackNavigation}>
                                     <ArrowBackIcon fontSize="large" />
                                 </div>
                             )}
