@@ -33,11 +33,13 @@ This web application is designed and optimized for mobile use, providing essenti
     ```
 
 4. Set up the Supabase environment by adding your Supabase credentials:
-   Create a `.env` file at the root of the project and add the following:
+   Create a `.env` like the `.env.dist` file at the root of the project and add the following:
 
     ```bash
-    VITE_SUPABASE_URL=your-supabase-url
-    VITE_SUPABASE_KEY=your-supabase-key
+    VITE_SUPABASE_URL=
+    VITE_SUPABASE_KEY=
+    VITE_SUPABASE_SERVICE_ROLE_KEY=
+    VITE_SUPABASE_RELATED_BUCKET_TABLE_NAME=
     ```
 
 5. Set up the Google Calendar API by adding your Google API credentials:
